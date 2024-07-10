@@ -1,0 +1,12 @@
+<Configuration name="develop" status="warn">
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%level] [%thread] = %message%n"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Root level="trace">
+            <AppenderRef ref="console"/>
+        </Root>
+    </Loggers>
+</Configuration>
