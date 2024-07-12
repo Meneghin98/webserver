@@ -1,7 +1,7 @@
 package it.meneghin.webserver.core.server;
 
 import it.meneghin.webserver.core.handlers.SocketHandler;
-import it.meneghin.webserver.core.handlers.SocketHandlerFactory;
+import it.meneghin.webserver.core.handlers.factories.HandlerFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -15,12 +15,12 @@ public class TCPServerTest {
     private TCPServer tcpServerToTest;
 
     private ServerSocket serverSocketMock;
-    private SocketHandlerFactory socketHandlerFactoryMock;
+    private HandlerFactory socketHandlerFactoryMock;
 
     @BeforeEach
     public void setup() {
         serverSocketMock = Mockito.mock(ServerSocket.class);
-        socketHandlerFactoryMock = Mockito.mock(SocketHandlerFactory.class);
+        socketHandlerFactoryMock = Mockito.mock(HandlerFactory.class);
 
         tcpServerToTest = new TCPServer(serverSocketMock, socketHandlerFactoryMock);
     }

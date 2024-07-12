@@ -1,6 +1,6 @@
 package it.meneghin.webserver;
 
-import it.meneghin.webserver.core.handlers.SocketHandlerFactory;
+import it.meneghin.webserver.core.handlers.factories.HandlerFactory;
 import it.meneghin.webserver.core.server.TCPServer;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -17,7 +17,7 @@ public class Application {
         Thread applicationThread = Thread.currentThread();
 
         try {
-            TCPServer server = new TCPServer(new ServerSocket(8080), new SocketHandlerFactory());
+            TCPServer server = new TCPServer(new ServerSocket(8080), new HandlerFactory());
             Thread shutdownVThread = Thread.ofVirtual().unstarted(() -> {
                 Thread.currentThread().setName("ShutdownThread");
                 log.info("Gracefully shutting down");
