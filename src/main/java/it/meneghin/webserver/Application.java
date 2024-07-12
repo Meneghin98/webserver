@@ -1,13 +1,12 @@
 package it.meneghin.webserver;
 
-import it.meneghin.webserver.core.handlers.SocketHandler;
+import it.meneghin.webserver.core.handlers.SocketHandlerFactory;
+import it.meneghin.webserver.core.server.TCPServer;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class Application {
@@ -18,18 +17,13 @@ public class Application {
         Thread applicationThread = Thread.currentThread();
 
         try {
-            AtomicBoolean serverRuning = new AtomicBoolean(true);
-            ServerSocket server = new ServerSocket(8080);
-
+            TCPServer server = new TCPServer(new ServerSocket(8080), new SocketHandlerFactory());
             Thread shutdownVThread = Thread.ofVirtual().unstarted(() -> {
                 Thread.currentThread().setName("ShutdownThread");
                 log.info("Gracefully shutting down");
-                serverRuning.set(false);
-                try {
-                    server.close();
-                } catch (IOException e) {
-                    log.warn("Failed to close server", e);
-                }
+
+                server.shutdown();
+
                 synchronized (applicationThread){
                     applicationThread.notify();
                 }
@@ -39,24 +33,7 @@ public class Application {
 
             Thread.ofVirtual().start(() -> {
                 Thread.currentThread().setName("ConnectionThread");
-                while (serverRuning.get()) {
-                    try {
-                        log.trace("Waiting for a new connection");
-                        Socket socket = server.accept();
-                        SocketHandler sh = new SocketHandler(socket);
-
-                        Thread.ofVirtual()
-                                .name(SocketHandler.class.getName())
-                                .start(sh);
-
-                    } catch (IOException e) {
-                        if(server.isClosed()){
-                            log.trace("Stop waiting for connection");
-                        } else {
-                            log.error("Failed to accept connection",e);
-                        }
-                    }
-                }
+                server.start();
             });
             log.info("Server listening on port 8080...");
         } catch (IOException e) {
