@@ -1,6 +1,6 @@
 package it.meneghin.webserver;
 
-import it.meneghin.webserver.core.threads.SocketHandlerThread;
+import it.meneghin.webserver.core.handlers.SocketHandler;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
@@ -43,7 +43,12 @@ public class Application {
                     try {
                         log.trace("Waiting for a new connection");
                         Socket socket = server.accept();
-                        (new SocketHandlerThread(socket)).start();
+                        SocketHandler sh = new SocketHandler(socket);
+
+                        Thread.ofVirtual()
+                                .name(SocketHandler.class.getName())
+                                .start(sh);
+
                     } catch (IOException e) {
                         if(server.isClosed()){
                             log.trace("Stop waiting for connection");

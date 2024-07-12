@@ -1,4 +1,4 @@
-package it.meneghin.webserver.core.threads;
+package it.meneghin.webserver.core.handlers;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,14 +10,12 @@ import java.nio.charset.StandardCharsets;
 
 import static it.meneghin.webserver.core.utils.Constants.CRLF;
 
-public class SocketHandlerThread extends Thread {
-
-    private static final Logger log = LogManager.getLogger(SocketHandlerThread.class);
+public class SocketHandler implements Runnable {
+    private static final Logger log = LogManager.getLogger(SocketHandler.class);
 
     private final Socket socket;
 
-    public SocketHandlerThread(Socket socket) {
-        super(SocketHandlerThread.class.getName());
+    public SocketHandler(Socket socket) {
         this.socket = socket;
     }
 
