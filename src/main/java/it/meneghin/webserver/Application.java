@@ -16,8 +16,10 @@ public class Application {
 	public static void main(String[] args) {
         Thread applicationThread = Thread.currentThread();
 
+        int port = 8080;
+
         try {
-            TCPServer server = new TCPServer(new ServerSocket(8080), new HandlerFactory());
+	        TCPServer server = new TCPServer(new ServerSocket(port), new HandlerFactory());
             Thread shutdownVThread = Thread.ofVirtual().unstarted(() -> {
                 Thread.currentThread().setName("ShutdownThread");
                 log.info("Gracefully shutting down");
@@ -35,7 +37,7 @@ public class Application {
                 Thread.currentThread().setName("ConnectionThread");
                 server.start();
             });
-            log.info("Server listening on port 8080...");
+            log.info("Server listening on port {}...", port);
         } catch (IOException e) {
             log.error("Failed to start server", e);
         }
